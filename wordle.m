@@ -2,23 +2,36 @@
 clc;
 
 % get words from wordData.txt
-words = [];
+wordData = [];
 fid = fopen("wordData.txt");
 
 tline = fgetl(fid);
 while ischar(tline)
-    words = [words string(tline)];
+    wordData = [wordData string(tline)];
     tline = fgetl(fid);
 end
 fclose(fid);
 
-% check if a word is valid
-inputWord = input("Enter a 5-letter word: ", 's');
+% game start
 
-if(ismember(inputWord, words))
-    disp('word is valid');
-else
-    disp('word is not valid');
+keepPlaying = true;
+
+% innitial answer
+anwser = wordData(randi(length(wordData)));
+
+% start guessing
+
+disp(anwser);
+while true
+    guess = "";
+    while ~(ismember(guess, wordData))
+        guess = input('Enter a 5-letter word: ', "s");
+        guess = string(guess);
+    end
+
+    if strcmp(guess, anwser)
+        break;
+    end
 end
 
-
+disp('Congratulation! The word is: ' + anwser);
