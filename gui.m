@@ -27,6 +27,15 @@ varargout{1} = handles.output;
 % INITIALIZE THE GAME
 function startBtn_Callback(hObject, eventdata, handles)
 global display guessNum wordData answer;
+
+% clear all
+clc;
+
+set(handles.endTxt, 'visible', 'off');
+set(handles.ansTxt, 'visible', 'off');
+set(handles.guessInput, 'visible', 'on');
+set(handles.startBtn, 'visible', 'off');
+
 guessNum = 1;
 display = [handles.dis11 handles.dis12 handles.dis13 handles.dis14 handles.dis15; ...
            handles.dis21 handles.dis22 handles.dis23 handles.dis24 handles.dis25; ...
@@ -34,11 +43,12 @@ display = [handles.dis11 handles.dis12 handles.dis13 handles.dis14 handles.dis15
            handles.dis41 handles.dis42 handles.dis43 handles.dis44 handles.dis45; ...
            handles.dis51 handles.dis52 handles.dis53 handles.dis54 handles.dis55];
 
-set(handles.guessInput, 'visible', 'on');
-set(handles.startBtn, 'visible', 'off');
-
-% clear all
-clc;
+for i = 1:5
+    for j = 1:5
+        set(display(i, j), 'String', '');
+        set(display(i, j), 'BackgroundColor', [0.149, 0.149, 0.149]);
+    end
+end
 
 % get words from wordData.txt
 wordData = [];
@@ -57,8 +67,6 @@ answer = wordData(randi(length(wordData)));
 % every input
 function guessInput_Callback(hObject, eventdata, handles)
 global display guessNum wordData answer
-
-
 
 % START GUESSING
 guess = get(hObject, 'String');
@@ -104,9 +112,7 @@ else
 
     if strcmp(guess, answer)
         gameEnd(1, handles);
-    end
-
-    if(guessNum > 5)
+    elseif guessNum > 5
         gameEnd(0, handles)
     end
 end
@@ -127,6 +133,10 @@ if(state == 1)
 else
     set(handles.endTxt, 'String', "YOU LOSE!");
 end
+
+set(handles.startBtn, 'visible', 'on');
+set(handles.startBtn, 'String', "PLAY AGAIN");
+
 
 % --- Executes during object creation, after setting all properties.
 function guessInput_CreateFcn(hObject, eventdata, handles)
