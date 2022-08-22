@@ -46,7 +46,7 @@ display = [handles.dis11 handles.dis12 handles.dis13 handles.dis14 handles.dis15
 for i = 1:5
     for j = 1:5
         set(display(i, j), 'String', '');
-        set(display(i, j), 'BackgroundColor', [0.149, 0.149, 0.149]);
+        set(display(i, j), 'BackgroundColor', [0.31, 0.31, 0.31]);
     end
 end
 
@@ -61,8 +61,12 @@ while ischar(tline)
 end
 fclose(fid);
 
+% avoid same random numbers after startup
+rng('shuffle');
+
 % innitial answer
 answer = wordData(randi(length(wordData)));
+
 
 % every input
 function guessInput_Callback(hObject, eventdata, handles)
@@ -100,11 +104,11 @@ else
     for i = 1:5
         set(display(guessNum, i), 'String', upper(extract(guess, i)));
         if output(i) == 1
-            set(display(guessNum, i), 'BackgroundColor', [0.392, 0.831, 0.075]);
+            set(display(guessNum, i), 'BackgroundColor', [0.094, 0.647, 0.22]);
         elseif output(i) == 2
-            set(display(guessNum, i), 'BackgroundColor', [0.929, 0.694, 0.125]);
+            set(display(guessNum, i), 'BackgroundColor', [0.839, 0.749, 0.314]);
         else
-            set(display(guessNum, i), 'BackgroundColor', [1.0, 0, 0]);
+            set(display(guessNum, i), 'BackgroundColor', [0.655, 0.655, 0.655]);
         end
     end
     
@@ -129,8 +133,12 @@ set(handles.guessInput, 'visible', 'off');
 set(handles.ansTxt, 'String', "THE WORD IS: " + upper(answer));
 
 if(state == 1)
+    set(handles.endTxt, 'ForegroundColor', [0.094, 0.647, 0.22]);
+    set(handles.ansTxt, 'ForegroundColor', [0.094, 0.647, 0.22]);
     set(handles.endTxt, 'String', "YOU WON!");
 else
+    set(handles.endTxt, 'ForegroundColor', [1.0, 0.0, 0.0]);
+    set(handles.ansTxt, 'ForegroundColor', [1.0, 0.0, 0.0]);
     set(handles.endTxt, 'String', "YOU LOSE!");
 end
 
