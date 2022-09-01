@@ -18,7 +18,6 @@ end
 
 function gui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
-
 guidata(hObject, handles);
 
 function varargout = gui_OutputFcn(hObject, eventdata, handles) 
@@ -46,10 +45,11 @@ display = [handles.dis11 handles.dis12 handles.dis13 handles.dis14 handles.dis15
            handles.dis21 handles.dis22 handles.dis23 handles.dis24 handles.dis25; ...
            handles.dis31 handles.dis32 handles.dis33 handles.dis34 handles.dis35; ...
            handles.dis41 handles.dis42 handles.dis43 handles.dis44 handles.dis45; ...
-           handles.dis51 handles.dis52 handles.dis53 handles.dis54 handles.dis55];
+           handles.dis51 handles.dis52 handles.dis53 handles.dis54 handles.dis55; ...
+           handles.dis61 handles.dis62 handles.dis63 handles.dis64 handles.dis65];
 
-% set boxes color to default
-for i = 1:5
+% set boxes to default
+for i = 1:6
     for j = 1:5
         set(display(i, j), 'String', '');
         set(display(i, j), 'BackgroundColor', [0.31, 0.31, 0.31]);
@@ -62,14 +62,14 @@ fid = fopen("wordData.txt");
 
 tline = fgetl(fid);
 while ischar(tline)
-    wordData = [wordData string(tline)];
+    word = string(tline);
+    wordData = [wordData word];
     tline = fgetl(fid);
 end
 fclose(fid);
 
 % avoid same random numbers after startup
 rng('shuffle');
-
 % init answer
 answer = wordData(randi(length(wordData)));
 
@@ -82,11 +82,11 @@ guess = get(hObject, 'String');
 
 % validity check
 if length(guess) ~= 5
-    msgbox("Please enter a 5 letter word")
+    msgbox(upper(guess) + " is not a 5-letter word")
 elseif ~ismember(guess, wordData)
-    msgbox("Please enter a valid word")
+    msgbox(upper(guess) +  " is not a valid word")
 else
-    % init state of each letter
+    % init state of each box in row
     output = zeros(1,5);
     % save if the letter of answer is checked
     ansCheck = zeros(1, 5);
@@ -99,7 +99,7 @@ else
         end
     end
     
-    % check exact match but still appear in answer
+    % check not exact match but still appear in answer
     for i = 1:5
         if output(i) ~= 1
             for j = 1:5
@@ -126,19 +126,18 @@ else
     
     guessNum = guessNum + 1;
 
-    % end the game if get correct answer or > 5 turns
+    % end the game if get correct answer or > 6 turns
     if strcmp(guess, answer)
-        gameEnd(1, handles);
-    elseif guessNum > 5
-        gameEnd(0, handles)
+        gameEnd(1, handles, answer);
+    elseif guessNum > 6
+        gameEnd(0, handles, answer)
     end
 end
 
 % clear input box
 set(handles.guessInput, 'String', '');
 
-function gameEnd(state, handles)
-global answer;
+function gameEnd(state, handles, answer)
 
 % change visibility of some buttons / text
 set(handles.endTxt, 'visible', 'on');
@@ -148,8 +147,10 @@ set(handles.guessInput, 'visible', 'off');
 set(handles.startBtn, 'visible', 'on');
 set(handles.startBtn, 'String', "PLAY AGAIN");
 
+% display the answer
 set(handles.ansTxt, 'String', "THE WORD IS: " + upper(answer));
 
+% green / red text if you win / lose
 if(state == 1)
     set(handles.endTxt, 'ForegroundColor', [0.094, 0.647, 0.22]);
     set(handles.ansTxt, 'ForegroundColor', [0.094, 0.647, 0.22]);
@@ -160,15 +161,15 @@ else
     set(handles.endTxt, 'String', "YOU LOSE!");
 end
 
+% When "?" button is pressed
+function checkWord_Callback(hObject, eventdata, handles)
+global answer;
+% open dictionary for definition of answer
+% from www.dictionary.com
+web("https://www.dictionary.com/browse/" + answer);
+
 % --- Executes during object creation, after setting all properties.
 function guessInput_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on button press in checkWord.
-function checkWord_Callback(hObject, eventdata, handles)
-global answer;
-% open dictionary for definition of answer
-web("https://www.dictionary.com/browse/" + answer);
