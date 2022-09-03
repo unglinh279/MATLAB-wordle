@@ -6,7 +6,7 @@ MATLAB-wordle is a clone of the infamous game "Wordle". But instead of limitting
 
 # RUNNING
 
-Run the 'gui.m' file
+Run the `gui.m` file
 
 # MEDIA
 
